@@ -8,16 +8,17 @@ const int displayRx = 0;
 const int displayTx = 0;
 
 const byte ident = 0xA3; // Identification Byte
+int baudrate = 9600;
 
-byte from_lin_data_size = 5; 
-byte from_lin_data[5]; 
+const byte from_lin_data_size = 5; 
+byte from_lin_data[from_lin_data_size]; 
 //from lin data structure:
-//2 bytes - rpm change value
+//2 bytes - rpm change values (1 byte: increase 2 byte: decrease)
 //1 byte - reverse byte
 //1 byte - pause
 //1 byte - fault code
-byte from_display_data_size = 5; 
-byte from_display_data[5]; 
+const byte from_display_data_size = 5; 
+byte from_display_data[from_display_data_size]; 
 //from display data structure:
 //2 bytes - rpm value
 //1 byte - pause
@@ -29,11 +30,17 @@ SoftwareSerial display(displayRx,displayTx);
 int LINread(byte data[], int data_size);
 int LINwriteResponse(byte data[],int data_size);
 
+//
+int rpmvalue = 400;
+
 void setup() {
 
-  lin.begin(9600);
-  display.begin(9600);
-
+  lin.begin(baudrate);
+  display.begin(baudrate);
+  from_display_data[1] = rpmvalue & 0xFF;
+  from_display_data[0] = rpmvalue >> 8;
+  from_display_data[3] = 0;
+  from_display_data[4] = 0;
 }
 
 void loop() {
@@ -42,6 +49,11 @@ void loop() {
   if(number_of_bytes_readen > 3) // receiving package from lin
   {
     display.write(from_lin_data, from_lin_data_size);
+    rpmvalue += from_lin_data[0];
+    rpmvalue -= from_lin_data[1];
+    from_display_data[2] = from_lin_data[2];
+    from_display_data[1] = rpmvalue & 0xFF;
+    from_display_data[0] = rpmvalue >> 8;
   }
   else if(number_of_bytes_readen == 2) // receiving request from lin
   {

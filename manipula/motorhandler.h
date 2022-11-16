@@ -18,9 +18,13 @@ public:
     pinMode(pwmpinbackward,OUTPUT);
   }
 
-  void adjustrotation(int rpmvalue)//inloop iterational pwm adjusting
+  void adjustrotation(int crpmvalue, int rpmvalue)//inloop iterational pwm adjusting
   { 
-    if(pwmcurrent > pwmtarget)
+    //crpmvalue = ((double)pwmcurrent/256.0)*400;//needed while rpm counting doesnt work
+    //pwmtarget = ((double)rpmvalue/400.0)*256;
+    //pwmcurrent = ((double)crpmvalue/400.0)*256;
+
+    if(crpmvalue > rpmvalue)
     {
       pwmcurrent -= pwmchangefactor;
       if(pwmcurrent >= 0)
@@ -34,7 +38,7 @@ public:
         analogWrite(pwmpinbackward,abs(pwmcurrent));        
       }      
     }  
-    else if(pwmcurrent < pwmtarget)
+    else if(crpmvalue < rpmvalue)
     {
       pwmcurrent += pwmchangefactor;
       if(pwmcurrent >= 0)
