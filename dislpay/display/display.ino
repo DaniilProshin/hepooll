@@ -9,12 +9,19 @@ const int displayTx = 0;
 
 const byte ident = 0xA3; // Identification Byte
 
-byte lin_input_data_size=8; 
-byte lin_input_data[8]; 
-
-byte display_output_data_size=8; 
-byte display_output_data[8]; 
-
+byte from_lin_data_size = 5; 
+byte from_lin_data[5]; 
+//from lin data structure:
+//2 bytes - rpm change value
+//1 byte - reverse byte
+//1 byte - pause
+//1 byte - fault code
+byte from_display_data_size = 5; 
+byte from_display_data[5]; 
+//from display data structure:
+//2 bytes - rpm value
+//1 byte - pause
+//1 byte - something
 SoftwareSerial lin(linRx,linTx);
 SoftwareSerial display(displayRx,displayTx);
 
@@ -31,40 +38,37 @@ void setup() {
 
 void loop() {
 
-  if(LINread(data, data_size))
+  int number_of_bytes_readen = LINread(from_lin_data, from_lin_data_size);
+  if(number_of_bytes_readen > 3) // receiving package from lin
   {
-    
-    byte package[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-    byte package_size = 8;
-    LINwriteResponse(package,package_size);
-
+    display.write(from_lin_data, from_lin_data_size);
   }
-    
+  else if(number_of_bytes_readen == 2) // receiving request from lin
+  {
+    LINwriteResponse(from_display_data,from_display_data_size);
+  }
+  if(display.available())
+  {
+    display.readBytes(from_display_data,from_display_data_size);
+  }
 
 }
 
-bool LINread(byte data[], byte data_size){
+int LINread(byte data[], byte data_size){
 	byte rec[data_size+3];
   lin.begin(9600);
-  for(int i = 0; i < data_size+3;++i)
-  {
-    rec[i] = 0;
-  }
-	if(lin.available()) // Check if there is an event on LIN bus
+
+  int bytes_avbl = lin.available();
+	if(bytes_avbl) // Check if there is an event on LIN bus
   { 
     lin.readBytes(rec,data_size+3);
 		for(int j=0;j<data_size;j++)
     {
 			data[j] = rec[j+2];
 		}
-    return true;
 	}
-  else
-  {
-    return false;
-  }
-	
-	
+  
+	return bytes_avbl;
 }
 
 int LINwriteResponse(byte data[],byte data_size)

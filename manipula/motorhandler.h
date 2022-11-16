@@ -18,7 +18,7 @@ public:
     pinMode(pwmpinbackward,OUTPUT);
   }
 
-  void adjustrotation()//inloop iterational pwm adjusting
+  void adjustrotation(int rpmvalue)//inloop iterational pwm adjusting
   { 
     if(pwmcurrent > pwmtarget)
     {
