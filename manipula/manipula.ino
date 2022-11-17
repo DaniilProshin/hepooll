@@ -126,6 +126,18 @@ void loop() {
       //reverse = input_data[2];
     }
   }
+  Serial.begin(9600);
+  Serial.println("input package:");
+  Serial.print(input_data[0],DEC);
+  Serial.print("  ");
+  Serial.print(input_data[1],DEC);
+  Serial.print("  ");
+  Serial.print(input_data[2],DEC);
+  Serial.print("  ");
+  Serial.print(input_data[3],DEC);
+  Serial.print("  ");
+  Serial.println(input_data[4],DEC);
+  
   if(reverse != input_data[2])
   {
     motor.switchPWM();

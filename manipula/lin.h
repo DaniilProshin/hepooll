@@ -63,6 +63,8 @@ int readResponse(byte *buffer,byte buffer_size)
   {
     if(this->linSerial.available())
     {
+      byte tmp = this->linSerial.read();
+      tmp = this->linSerial.read();
       this->linSerial.readBytes(buffer,buffer_size);
       pinMode(this->txPin, OUTPUT);
       return 1;

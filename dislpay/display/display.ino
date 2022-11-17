@@ -38,6 +38,7 @@ void setup() {
 
   lin.begin(baudrate);
   display.begin(baudrate);
+  Serial.begin(9600);
   //from_display_data[1] = rpmvalue & 0xFF;
  //from_display_data[0] = rpmvalue >> 8;
   from_display_data[0] = 0;
@@ -51,6 +52,7 @@ void loop() {
   int number_of_bytes_readen = LINread(from_lin_data, from_lin_data_size);
   if(number_of_bytes_readen > 3) // receiving package from lin
   {
+    Serial.println("readed more than 3 bytes");
     display.write(from_lin_data, from_lin_data_size);
     rpmvalue += from_lin_data[0];
     rpmvalue -= from_lin_data[1];
@@ -61,7 +63,10 @@ void loop() {
   }
   else if(number_of_bytes_readen == 2) // receiving request from lin
   {
+    Serial.println("readed 2 bytes");
     LINwriteResponse(from_display_data,from_display_data_size);
+    Serial.println("write response");
+    
   }
   if(display.available())
   {
