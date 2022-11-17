@@ -14,6 +14,7 @@ int pulseCounter = 0;
 unsigned long rotationTime;
 unsigned long initialTime = 0;
 
+bool  reverse = 0;
 int rpmvalue = 0; // desired rpm value
 int crpmvalue = 0; // calculated current rpm value
 unsigned long previous_time = 0;
@@ -29,6 +30,7 @@ const byte input_data_size = 5;
 byte input_data[input_data_size];
 //input data structure:
 //2 bytes - rpm value
+//1 byte - reverse
 //1 byte - pause
 //1 byte - something
 const byte output_data_size = 5;
@@ -106,7 +108,9 @@ void loop() {
   {
     lin.writeRequest(ident);
     lin.readResponse(input_data,input_data_size);
-    rpmvalue = input_data[1] |  input_data[0] << 8;
+    //rpmvalue = input_data[1] |  input_data[0] << 8;
+    rpmvalue = input_data[0];
+    reverse = input_data[2];
   }
   else
   {
@@ -117,10 +121,39 @@ void loop() {
       lin.writeRequest(ident);
       lin.readResponse(input_data,input_data_size);
       previous_time = current_time;
-      rpmvalue = input_data[1] |  input_data[0] << 8;
+      //rpmvalue = input_data[1] |  input_data[0] << 8;
+      rpmvalue = input_data[0];
+      //reverse = input_data[2];
     }
   }
-  
+  if(reverse != input_data[2])
+  {
+    motor.switchPWM();
+    reverse = input_data[2];
+  }
+
+  if(rpmvalue > motor.pwmcurrent)
+  {
+    if(motor.pwmtarget < 0)
+    {
+      motor.decreasePWM();
+    }
+    else
+    {
+      motor.increasePWM();
+    }
+  }
+  else if(rpmvalue < motor.pwmcurrent)
+  {
+    if(motor.pwmtarget < 0)
+    {
+      motor.increasePWM();
+    }
+    else
+    {
+      motor.decreasePWM();
+    }
+  }
   
   motor.adjustrotation(crpmvalue,rpmvalue);
   

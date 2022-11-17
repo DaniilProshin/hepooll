@@ -23,8 +23,8 @@ public:
     //crpmvalue = ((double)pwmcurrent/256.0)*400;//needed while rpm counting doesnt work
     //pwmtarget = ((double)rpmvalue/400.0)*256;
     //pwmcurrent = ((double)crpmvalue/400.0)*256;
-
-    if(crpmvalue > rpmvalue)
+    //crpmvalue = pwmcurrent;
+    if(pwmcurrent > pwmtarget)
     {
       pwmcurrent -= pwmchangefactor;
       if(pwmcurrent >= 0)
@@ -38,7 +38,7 @@ public:
         analogWrite(pwmpinbackward,abs(pwmcurrent));        
       }      
     }  
-    else if(crpmvalue < rpmvalue)
+    else if(pwmcurrent < pwmtarget)
     {
       pwmcurrent += pwmchangefactor;
       if(pwmcurrent >= 0)

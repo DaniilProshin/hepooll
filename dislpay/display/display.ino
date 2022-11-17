@@ -21,6 +21,7 @@ const byte from_display_data_size = 5;
 byte from_display_data[from_display_data_size]; 
 //from display data structure:
 //2 bytes - rpm value
+//1 byte - reverse
 //1 byte - pause
 //1 byte - something
 SoftwareSerial lin(linRx,linTx);
@@ -37,8 +38,10 @@ void setup() {
 
   lin.begin(baudrate);
   display.begin(baudrate);
-  from_display_data[1] = rpmvalue & 0xFF;
-  from_display_data[0] = rpmvalue >> 8;
+  //from_display_data[1] = rpmvalue & 0xFF;
+ //from_display_data[0] = rpmvalue >> 8;
+  from_display_data[0] = 0;
+  from_display_data[2] = 0;
   from_display_data[3] = 0;
   from_display_data[4] = 0;
 }
@@ -52,8 +55,9 @@ void loop() {
     rpmvalue += from_lin_data[0];
     rpmvalue -= from_lin_data[1];
     from_display_data[2] = from_lin_data[2];
-    from_display_data[1] = rpmvalue & 0xFF;
-    from_display_data[0] = rpmvalue >> 8;
+    //from_display_data[1] = rpmvalue & 0xFF;
+   // from_display_data[0] = rpmvalue >> 8;
+    from_display_data[0] = rpmvalue;
   }
   else if(number_of_bytes_readen == 2) // receiving request from lin
   {
