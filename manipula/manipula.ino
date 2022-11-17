@@ -48,6 +48,11 @@ void setup() {
   lin.begin(baudrate);
   Serial.begin(9600);
   Serial.println("Getting started");
+  input_data[0] = 0;
+  input_data[1] = 0;
+  input_data[2] = 0;
+  input_data[3] = 0;
+  input_data[4] = 0;
 }
 
 void loop() {

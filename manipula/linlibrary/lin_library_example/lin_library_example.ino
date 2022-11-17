@@ -19,6 +19,12 @@ void loop() {
   byte data[] = {0,0,0,0,0,0,0,0};
   lin.writeRequest(ident);
   lin.readResponse(data,data_size);
-
-  delay(3000);
+  Serial.print("received response: ");
+  for(int i = 0;i < data_size;++i)
+  {
+    Serial.print(data[i]);
+    Serial.print("  ");
+  }
+  Serial.println();
+  delay(1000);
 }
