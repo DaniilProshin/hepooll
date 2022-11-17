@@ -30,7 +30,8 @@ SoftwareSerial display(displayRx,displayTx);
 
 int LINread(byte data[], int data_size);
 int LINwriteResponse(byte data[],int data_size);
-
+void printdisplay();
+void printmanipula();
 //
 int rpmvalue = 400;
 
@@ -42,6 +43,7 @@ void setup() {
   //from_display_data[1] = rpmvalue & 0xFF;
  //from_display_data[0] = rpmvalue >> 8;
   from_display_data[0] = 0;
+  from_display_data[1] = 0;
   from_display_data[2] = 0;
   from_display_data[3] = 0;
   from_display_data[4] = 0;
@@ -50,9 +52,12 @@ void setup() {
 void loop() {
 
   int number_of_bytes_readen = LINread(from_lin_data, from_lin_data_size);
+  Serial.print("Number of bytes readen: ");
+  Serial.println(number_of_bytes_readen);
   if(number_of_bytes_readen > 3) // receiving package from lin
   {
-    Serial.println("readed more than 3 bytes");
+    Serial.println("readed message:");
+    printmanipula();
     display.write(from_lin_data, from_lin_data_size);
     rpmvalue += from_lin_data[0];
     rpmvalue -= from_lin_data[1];
@@ -63,16 +68,36 @@ void loop() {
   }
   else if(number_of_bytes_readen == 2) // receiving request from lin
   {
-    Serial.println("readed 2 bytes");
+    Serial.println("readed request");
+   
     LINwriteResponse(from_display_data,from_display_data_size);
-    Serial.println("write response");
-    
+    Serial.print("write response: ");
+    printdisplay(); 
   }
   if(display.available())
   {
     display.readBytes(from_display_data,from_display_data_size);
   }
 
+}
+
+void printmanipula()
+{
+  for(int i = 0; i < from_lin_data_size;++i)
+  {
+    Serial.print(from_lin_data[i],DEC);
+    Serial.print("  ");
+  }
+  Serial.println();
+}
+void printdisplay()
+{
+  for(int i = 0; i < from_display_data_size;++i)
+  {
+    Serial.print(from_display_data[i],DEC);
+    Serial.print("  ");
+  }
+  Serial.println();
 }
 
 int LINread(byte data[], byte data_size){

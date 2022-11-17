@@ -46,6 +46,8 @@ LIN lin(lin_rxpin,lin_txpin);
 void setup() {
   //Serial.begin(9600); 
   lin.begin(baudrate);
+  Serial.begin(9600);
+  Serial.println("Getting started");
 }
 
 void loop() {
@@ -65,6 +67,7 @@ void loop() {
 
   if(butincrease.isClick()) // increase
   {
+    
     output_data[0] = motor.pwmtargetchangefactor;
     lin.write(ident, output_data, output_data_size);
     output_data[0] = 0;
@@ -106,6 +109,7 @@ void loop() {
 
   if(changesmade)
   {
+    Serial.println("Button was pressed... writing request");
     lin.writeRequest(ident);
     lin.readResponse(input_data,input_data_size);
     //rpmvalue = input_data[1] |  input_data[0] << 8;
@@ -115,9 +119,10 @@ void loop() {
   else
   {
     current_time = millis();
-
+    
     if(current_time - previous_time >= communication_period)
     {
+      Serial.println("time to communicate");
       lin.writeRequest(ident);
       lin.readResponse(input_data,input_data_size);
       previous_time = current_time;
@@ -126,8 +131,8 @@ void loop() {
       //reverse = input_data[2];
     }
   }
-  Serial.begin(9600);
-  Serial.println("input package:");
+  //Serial.begin(9600);
+  Serial.print("input package:  ");
   Serial.print(input_data[0],DEC);
   Serial.print("  ");
   Serial.print(input_data[1],DEC);
