@@ -4,8 +4,7 @@
 const byte ident = 0xA3; // Identification Byte
 byte data_size=5; // length of byte array
 byte data[5]; // byte array for received data
-SoftwareSerial mySerial(2,3);
-int sleep_pin = 8;
+SoftwareSerial mySerial(2,4);
 
 void setup() {
   // put your setup code here, to run once:
@@ -13,8 +12,7 @@ void setup() {
   //pinMode(3,OUTPUT);
   mySerial.begin(9600);
   Serial.begin(9600);
-  pinMode(sleep_pin,OUTPUT);
-  digitalWrite(sleep_pin,HIGH);
+
 }
 
 
