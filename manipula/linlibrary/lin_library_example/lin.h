@@ -58,18 +58,18 @@ int readResponse(byte *buffer,byte buffer_size)
   digitalWrite(this->txPin, LOW);
   do
   {
-    if(this->linSerial.available() >= (buffer_size + 2))
+    if(this->linSerial.available() >= (buffer_size))
     {
       byte read[buffer_size+2];
-      size_t n = this->linSerial.readBytes(read,buffer_size+2);
+      size_t n = this->linSerial.readBytes(read,buffer_size);
       for(int i = 0; i < buffer_size;++i)
       {
-        buffer[i] = read[i+2];
+        buffer[i] = read[i];
       }
       pinMode(this->txPin, OUTPUT);
       return 1;
     }
-  } while(this->linSerial.available() < (buffer_size + 2));
+  } while(this->linSerial.available() < (buffer_size));
 
   pinMode(this->txPin, OUTPUT);
   return 0;

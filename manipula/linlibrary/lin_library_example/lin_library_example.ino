@@ -2,12 +2,12 @@
 
 int lin_rxpin = 4;
 int lin_txpin = 2;
-int sleep_pin = 8
+int sleep_pin = 8;
 int baudrate = 9600;
 byte ident = 0xA3;
 byte data_size = 5;
 byte data[] = {0,0,0,0,0};
-bte output_size = 5;
+byte output_size = 5;
 byte output[] = {11,22,33,44,55};
 LIN lin(lin_rxpin,lin_txpin);
 
@@ -21,7 +21,14 @@ void setup() {
 }
 
 void loop() {
-  lin.write(ident,output,output_size)
+  Serial.print("Sending message: ");
+  for(int i = 0;i < output_size;++i)
+  {
+    Serial.print(output[i]);
+    Serial.print("  ");
+  }
+  Serial.println();
+  lin.write(ident,output,output_size);
   delay(10);
   lin.writeRequest(ident);
   lin.readResponse(data,data_size);

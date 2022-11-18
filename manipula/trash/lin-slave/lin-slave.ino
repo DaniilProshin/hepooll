@@ -25,14 +25,20 @@ void loop() {
   if(bytesToread == 2)
   {
     Serial.println("Getting request");
-    byte package[5]] = {1, 2, 3, 4, 5};
+    byte package[5] = {1, 2, 3, 4, 5};
     byte package_size = 5;
     LINwriteResponse(package,package_size);
     Serial.println("Writed response");
   }
   else if(bytesToread >= data_size)
   {
-    Serial.println("Getting message");
+    Serial.print("Getting message:");
+    for(int i = 0; i < data_size;++i)
+    {
+      Serial.print(data[i],DEC);
+      Serial.print("  ");
+    }
+    Serial.println();
   }
   
 
