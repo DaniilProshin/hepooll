@@ -22,23 +22,20 @@ class LIN {
   }
 
   byte calcIdentParity(byte ident)
-{
-  byte p0 = BIT(ident,0) ^ BIT(ident,1) ^ BIT(ident,2) ^ BIT(ident,4);
-  byte p1 = ~(BIT(ident,1) ^ BIT(ident,3) ^ BIT(ident,4) ^ BIT(ident,5));
-  return (p0 | (p1<<1))<<6;
-}
+  {
+    byte p0 = BIT(ident,0) ^ BIT(ident,1) ^ BIT(ident,2) ^ BIT(ident,4);
+    byte p1 = ~(BIT(ident,1) ^ BIT(ident,3) ^ BIT(ident,4) ^ BIT(ident,5));
+    return (p0 | (p1<<1))<<6;
+  }
 
   int write(byte ident, byte data[], byte data_size){
 	// Calculate checksum
 	byte suma = 0;
 	for(int i=0;i<data_size;i++) 
 		suma = suma + data[i];
-	
 	byte checksum = 255 - suma;
-  byte res[data_size + 1];
-
+  this->linSerial.flush();
   serialBreak();
-		
 	this->linSerial.write(0x55); // write Synch Byte to serial
 	this->linSerial.write(ident); // write Identification Byte to serial
 	for(int i=0;i<data_size;i++) this->linSerial.write(data[i]); // write data to serial
@@ -61,15 +58,20 @@ int readResponse(byte *buffer,byte buffer_size)
   digitalWrite(this->txPin, LOW);
   do
   {
-    if(this->linSerial.available())
+    if(this->linSerial.available() >= (buffer_size + 2))
     {
-      byte tmp = this->linSerial.read();
-      tmp = this->linSerial.read();
-      this->linSerial.readBytes(buffer,buffer_size);
+      byte read[buffer_size+2];
+      size_t n = this->linSerial.readBytes(read,buffer_size+2);
+      for(int i = 0; i < buffer_size;++i)
+      {
+        buffer[i] = read[i+2];
+      }
       pinMode(this->txPin, OUTPUT);
       return 1;
     }
-  } while(!this->linSerial.available());
+  } while(this->linSerial.available() < (buffer_size + 2));
+
+  pinMode(this->txPin, OUTPUT);
   return 0;
 }
 

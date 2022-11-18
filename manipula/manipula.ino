@@ -106,6 +106,7 @@ void loop() {
 
   if(butswitch.isHold())// pause
   {
+    //output_data[3] = !output_data[3];
     (output_data[3])?(output_data[3] = 0):(output_data[3] = 1); 
     lin.write(ident, output_data, output_data_size);
     (output_data[3])?(output_data[3] = 0):(output_data[3] = 1);

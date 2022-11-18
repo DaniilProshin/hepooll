@@ -2,8 +2,8 @@
 
 
 const byte ident = 0xA3; // Identification Byte
-byte data_size=4; // length of byte array
-byte data[4]; // byte array for received data
+byte data_size=5; // length of byte array
+byte data[5]; // byte array for received data
 SoftwareSerial mySerial(2,3);
 
 void setup() {
@@ -20,25 +20,16 @@ int LINread(byte data[], int data_size);
 int LINwriteResponse(byte data[],int data_size);
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if(LINread(data, data_size))
+
+  if(LINread(data, data_size) == 2)
   {
-    
-    byte package[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-   byte package_size = 8;
-  // byte ident = 0xA3;
-   //delay(13);
-   
-   LINwriteResponse(package,package_size);
-  //Serial.println(mySerial.overflow());
+    byte package[5]] = {1, 2, 3, 4, 5};
+    byte package_size = 5;
+    LINwriteResponse(package,package_size);
+    Serial.println("Writed response");
   }
-    
- // Serial.write(data,data_size);
-  /*
-  byte package[4] = {31, 255, 0, 0};
-  LINwriteResponse(package,4);
-  Serial.println("Writed response");
-  */
+  
+
 }
 
  int LINwrite(byte ident, byte data[], byte data_size){
@@ -61,36 +52,30 @@ void loop() {
 	return 1;
 }
 
-bool LINread(byte data[], byte data_size){
+int LINread(byte data[], byte data_size){
 	byte rec[data_size+3];
   mySerial.begin(9600);
   for(int i = 0; i < data_size+3;++i)
   {
     rec[i] = 0;
   }
-    //Serial.println("Check if there are data");
-		if(mySerial.available()){ // Check if there is an event on LIN bus
-    // Serial.println("Read something: ");
-       Serial.println("Received data");
-			mySerial.readBytes(rec,data_size+3);
-			
-				for(int j=0;j<data_size;j++){
-				data[j] = rec[j+2];
-				}
-        for(int i = 0; i < data_size+3;++i)
-        {
-          int a = rec[i];
-          Serial.println(a,DEC);
-        }
-        return true;
-         mySerial.end();
-		}
-    else
+  int bytesToread = mySerial.available();
+  
+	if(bytesToread == 2){ // Check if there is an event on LIN bus
+    Serial.println("Received request package:");
+		mySerial.readBytes(rec,data_size+3); 
+	}
+  else if(bytesToread > 2)
+  {
+    Serial.println("Received ordinary package:");
+		mySerial.readBytes(rec,data_size+3);
+		for(int j=0;j<data_size;j++)
     {
-     return false;
-    }
+			data[j] = rec[j+2];
+		}
+  }
 	
-	
+	 return bytesToread;
 }
 
 int LINwriteResponse(byte data[],byte data_size)
@@ -102,9 +87,6 @@ int LINwriteResponse(byte data[],byte data_size)
 	// Start interface
     Serial.println("transmiting data");
 		mySerial.begin(9600); // config Serial
-    //mySerial.write(0x55); // write Synch Byte to serial
-    //byte ident = 0xA3;
-    //mySerial.write(ident);
 		mySerial.write(data, data_size); // write data to serial
 		mySerial.write(checksum); // write data to serial
 		mySerial.end(); // clear Serial config
