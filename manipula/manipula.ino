@@ -21,8 +21,9 @@ unsigned long previous_time = 0;
 unsigned long current_time = 0;
 unsigned long communication_period = 100;
 
-int lin_rxpin = 2;
-int lin_txpin = 3;
+int lin_rxpin = 4;
+int lin_txpin = 2;
+int sleep_pin = 8;
 int baudrate = 9600;
 byte ident = 0xA3;
 
@@ -48,23 +49,19 @@ void setup() {
   lin.begin(baudrate);
   Serial.begin(9600);
   Serial.println("Getting started");
-  input_data[0] = 0;
-  input_data[1] = 0;
-  input_data[2] = 0;
-  input_data[3] = 0;
-  input_data[4] = 0;
+  for(int i =0;i < input_data_size;++i)
+  {
+    input_data[i] = 0;
+  }
+  
+  pinMode(sleep_pin,OUTPUT);
+  digitalWrite(sleep_pin,HIGH);
+
 }
 
 void loop() {
   
   bool changesmade = 0;
-
-  /*
-  lin.writeRequest(ident);
-  lin.readResponse(data,data_size);
-
-  delay(1000);
-  */
 
   butincrease.tick();
   butdecrease.tick();
@@ -72,7 +69,6 @@ void loop() {
 
   if(butincrease.isClick()) // increase
   {
-    
     output_data[0] = motor.pwmtargetchangefactor;
     lin.write(ident, output_data, output_data_size);
     output_data[0] = 0;

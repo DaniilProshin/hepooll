@@ -3,7 +3,7 @@
 
 
 const int linRx = 2;
-const int linTx = 3;
+const int linTx = 4;
 const int displayRx = 0;
 const int displayTx = 0;
 
