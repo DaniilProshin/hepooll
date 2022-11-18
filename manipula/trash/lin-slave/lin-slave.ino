@@ -5,6 +5,7 @@ const byte ident = 0xA3; // Identification Byte
 byte data_size=5; // length of byte array
 byte data[5]; // byte array for received data
 SoftwareSerial mySerial(2,3);
+int sleep_pin = 8;
 
 void setup() {
   // put your setup code here, to run once:
@@ -12,7 +13,8 @@ void setup() {
   //pinMode(3,OUTPUT);
   mySerial.begin(9600);
   Serial.begin(9600);
-  //Serial.println("Start listening");
+  pinMode(sleep_pin,OUTPUT);
+  digitalWrite(sleep_pin,HIGH);
 }
 
 
@@ -21,12 +23,18 @@ int LINwriteResponse(byte data[],int data_size);
 
 void loop() {
 
-  if(LINread(data, data_size) == 2)
+  int bytesToread = LINread(data, data_size); 
+  if(bytesToread == 2)
   {
+    Serial.println("Getting request");
     byte package[5]] = {1, 2, 3, 4, 5};
     byte package_size = 5;
     LINwriteResponse(package,package_size);
     Serial.println("Writed response");
+  }
+  else if(bytesToread >= data_size)
+  {
+    Serial.println("Getting message");
   }
   
 

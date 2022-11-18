@@ -1,11 +1,14 @@
 #include "lin.h"
 
-int lin_rxpin = 2;
-int lin_txpin = 3;
+int lin_rxpin = 4;
+int lin_txpin = 2;
+int sleep_pin = 8
 int baudrate = 9600;
 byte ident = 0xA3;
 byte data_size = 5;
 byte data[] = {0,0,0,0,0};
+bte output_size = 5;
+byte output[] = {11,22,33,44,55};
 LIN lin(lin_rxpin,lin_txpin);
 
 
@@ -13,11 +16,13 @@ void setup() {
   // put your setup code here, to run once:
   lin.begin(baudrate);
   Serial.begin(9600);
-  
+  pinMode(sleep_pin,OUTPUT);
+  digitalWrite(sleep_pin,HIGH);
 }
 
 void loop() {
-
+  lin.write(ident,output,output_size)
+  delay(10);
   lin.writeRequest(ident);
   lin.readResponse(data,data_size);
   Serial.print("received response: ");
