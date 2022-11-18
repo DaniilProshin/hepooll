@@ -4,6 +4,8 @@
 const byte ident = 0xA3; // Identification Byte
 byte data_size=5; // length of byte array
 byte data[5]; // byte array for received data
+int linrx = 2;
+int lintx = 4;
 SoftwareSerial mySerial(2,4);
 
 void setup() {
@@ -65,6 +67,8 @@ void loop() {
 }
 
 int LINread(byte data[], byte data_size){
+   pinMode(lintx, INPUT);
+  digitalWrite(lintx, LOW);
 	byte rec[data_size+3];
   mySerial.begin(9600);
   for(int i = 0; i < data_size+3;++i)
@@ -86,7 +90,7 @@ int LINread(byte data[], byte data_size){
 			data[j] = rec[j+2];
 		}
   }
-	
+	 pinMode(lintx, OUTPUT);
 	 return bytesToread;
 }
 
