@@ -24,17 +24,19 @@ int LINwriteResponse(byte data[],int data_size);
 void loop() {
 
   int bytesToread = LINread(data, data_size); 
+  //Serial.print("received bytes: ");
+  //Serial.println(bytesToread);
   if(bytesToread == 2)
   {
     Serial.println("Getting request");
     byte package[5] = {1, 2, 3, 4, 5};
     byte package_size = 5;
     LINwriteResponse(package,package_size);
-    Serial.println("Writed response");
+    //Serial.println("Writed response");
   }
   else if(bytesToread >= data_size)
   {
-    Serial.print("Getting message:");
+   // Serial.print("Getting message:");
     for(int i = 0; i < data_size;++i)
     {
       Serial.print(data[i],DEC);
@@ -67,8 +69,8 @@ void loop() {
 }
 
 int LINread(byte data[], byte data_size){
-   pinMode(lintx, INPUT);
-  digitalWrite(lintx, LOW);
+  //pinMode(lintx, INPUT);
+  //digitalWrite(lintx, LOW);
 	byte rec[data_size+3];
   mySerial.begin(9600);
   for(int i = 0; i < data_size+3;++i)
@@ -90,7 +92,7 @@ int LINread(byte data[], byte data_size){
 			data[j] = rec[j+2];
 		}
   }
-	 pinMode(lintx, OUTPUT);
+	// pinMode(lintx, OUTPUT);
 	 return bytesToread;
 }
 

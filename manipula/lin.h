@@ -48,6 +48,7 @@ class LIN {
 	  byte identByte = (ident&0x3f) | calcIdentParity(ident);
 	  byte header[2]= {0x55, identByte};  
     serialBreak();
+    this->linSerial.flush();
 	  this->linSerial.write(header,2);
   	return 1;
   }
@@ -58,7 +59,7 @@ int readResponse(byte *buffer,byte buffer_size)
   digitalWrite(this->txPin, LOW);
   do
   {
-    if(this->linSerial.available() >= (buffer_size + 2))
+    if(this->linSerial.available() >= (buffer_size))
     {
       byte read[buffer_size+2];
       size_t n = this->linSerial.readBytes(read,buffer_size+2);
@@ -69,7 +70,7 @@ int readResponse(byte *buffer,byte buffer_size)
       pinMode(this->txPin, OUTPUT);
       return 1;
     }
-  } while(this->linSerial.available() < (buffer_size + 2));
+  } while(this->linSerial.available() < (buffer_size));
 
   pinMode(this->txPin, OUTPUT);
   return 0;
