@@ -28,7 +28,7 @@ void loop() {
   //Serial.println(bytesToread);
   if(bytesToread == 2)
   {
-    Serial.println("Getting request");
+    //Serial.println("Getting request");
     byte package[5] = {1, 2, 3, 4, 5};
     byte package_size = 5;
     LINwriteResponse(package,package_size);
@@ -37,12 +37,14 @@ void loop() {
   else if(bytesToread >= data_size)
   {
    // Serial.print("Getting message:");
+   /*
     for(int i = 0; i < data_size;++i)
     {
       Serial.print(data[i],DEC);
       Serial.print("  ");
     }
     Serial.println();
+    */
   }
   
 
@@ -80,16 +82,26 @@ int LINread(byte data[], byte data_size){
   int bytesToread = mySerial.available();
   
 	if(bytesToread == 2){ // Check if there is an event on LIN bus
-    Serial.println("Received request package:");
+    Serial.print("Received request package: ");
 		mySerial.readBytes(rec,data_size+3); 
+    Serial.print(rec[0],DEC);
+    Serial.print(" ");
+    Serial.print(rec[1],DEC);
+    Serial.println(" ");
 	}
   else if(bytesToread > 2)
   {
-    Serial.println("Received ordinary package:");
+    Serial.print("Received ordinary package: ");
 		mySerial.readBytes(rec,data_size+3);
+    for(int i = 0; i < data_size;++i)
+    {
+      Serial.print(rec[i],DEC);
+      Serial.print("  ");
+    }
+    Serial.println();
 		for(int j=0;j<data_size;j++)
     {
-			data[j] = rec[j+2];
+			data[j] = rec[j];
 		}
   }
 	// pinMode(lintx, OUTPUT);
