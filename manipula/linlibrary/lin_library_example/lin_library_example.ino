@@ -21,6 +21,7 @@ void setup() {
 }
 
 void loop() {
+  /*
   Serial.print("Sending message: ");
   for(int i = 0;i < output_size;++i)
   {
@@ -30,6 +31,7 @@ void loop() {
   Serial.println();
   lin.write(ident,output,output_size);
   delay(10);
+  */
   lin.writeRequest(ident);
   lin.readResponse(data,data_size);
   Serial.print("received response: ");
